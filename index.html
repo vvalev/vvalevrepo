@@ -1,0 +1,128 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="utf-8">
+<title>jQuery Mobile Web App</title>
+<link href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" rel="stylesheet" type="text/css"/>
+<script src="http://code.jquery.com/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js" type="text/javascript"></script>
+
+
+<script>
+  	
+$(document).ready(function () {
+	//alert('portalUser (index) document ready!!'); 
+    console && console.log("portalUser (index) document ready!!");
+	
+	getData();
+	
+});
+
+		$(document).on('pageload', '[data-role="page"]', function(){   
+			//alert('portalUser (index) pageload!!');
+			getData();
+			//console && console.log("portalUser (index) pageload!!");
+		});
+		
+            function getData() {
+			
+			var http_method = "POST";
+			
+			//---URL with LogIn...and other params...
+			var url = "http://query.yahooapis.com/v1/public/yql?q=select%20item%20from%20weather.forecast%20where%20location%3D%2248907%22&format=json" ;
+			
+			/* ATTENTION: It is very important first to call, for example, brawser: chrome.exe --disable-web-security
+			   to allow cross-domain ajax queries!!!! --*/
+			
+                $.ajax({
+                    type: http_method,
+					cache: false,
+					async: false,
+					url: url,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function(data) {
+					
+                      //alert('Success:' + data.query.results.channel.item.condition.text );
+					  
+					  //alert('Received data from server...');
+					  
+					  tempAlert('Received data from server...', 2000);
+					   
+					   
+					  var blocka = "<div class='ui-block-a' style='width: 10%'>";
+					  var blockb = "<div class='ui-block-b' style='width: 30%'>";
+					  var blockc = "<div class='ui-block-c' style='width: 10%'>";
+					  var blockd = "<div class='ui-block-d' style='width: 50%'>";
+					  //var blocke = "<div class='ui-block-e' style='width: 50%'>";
+					  
+					  var title = "<div class='ui-bar ui-bar-a' style='text-align: right'>";
+					  var uibarc = "<div class='ui-bar ui-bar-c' style='text-align: right'>";
+					  var uibare = "<div class='ui-bar ui-bar-e' style='text-align: right'>";
+					  
+					  var str="<div class='ui-grid-d'>";
+					  str += blocka + title + "Код</div></div>";
+					  str += blockb + title + "Дата</div></div>";
+					  str += blockc + title + "Ден</div></div>";
+					  str += blockd + title + "Текст</div></div>";
+					  
+					  
+					  for (var i in data.query.results.channel.item.forecast) {
+						str += blocka + uibare + data.query.results.channel.item.forecast[i].code + "</div></div>";
+						str += blockb + uibare + data.query.results.channel.item.forecast[i].date + "</div></div>";
+						str += blockc + uibare + data.query.results.channel.item.forecast[i].day  + "</div></div>";
+						str += blockd + uibare + data.query.results.channel.item.forecast[i].text + "</div></div>";
+ 					  }
+					 
+						str += "</div>";
+						$("#jsondata").html(str).trigger("create");
+
+					   
+                    }
+					,
+                    error: function (xhr, ajaxOptions, thrownError) {
+                         alert("Error: " + xhr.status + "\n" +
+                               "Message: " + xhr.statusText + "\n" +
+                               "Response: " + xhr.responseText + "\n" + thrownError);
+                    }
+                });
+				
+				
+            }
+
+			//---------------------------------------------------	
+			function tempAlert(msg,duration)
+			{
+			 var el = document.createElement("div");
+			 el.setAttribute("style","position:absolute;top:3%;left:2%;background-color:white;");
+			 el.innerHTML = msg;
+			 setTimeout(function(){
+			  el.parentNode.removeChild(el);
+			 },duration);
+			 document.body.appendChild(el);
+			}
+			//----------------------------------------------------
+			
+
+			
+			setInterval('getData()',10000); //call every ... secs
+			
+			
+	</script>
+
+</head> 
+<body> 
+
+    <!-- Main Page -->
+    <div id="main" data-role="page">
+      <div data-role="header">
+        <h1>Sync Demo(jQM,JSON)</h1>
+      </div>
+      <div id="content" data-role="content" data-theme="b">
+        <div id="jsondata"></div>
+		<div id="car_jsondata"></div>
+      </div>
+    </div>
+
+</body>
+</html>
